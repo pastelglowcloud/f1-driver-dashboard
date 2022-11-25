@@ -1,16 +1,28 @@
-
-
 h1 {
   text-align:center;
   font: bold italic;
   color: beige;
+  font-size: 5em;
 }
 
 h2 {
+  font-size: 15em;
+  text-align: center;
+  color: beige;
+}
+
+h3 {
   font-size: 30px;
   text-align: center;
   color: beige;
 }
+
+Iframe {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* ids */
 
 .row {
   display: flex;
@@ -22,36 +34,25 @@ h2 {
   vertical-align: bottom;
   text-align: center;
   padding: 0;
+  color: beige;
 }
 
 .kpi_group {
   padding-bottom: 50px;
   padding-top: 50px;
+  display: inline-block;
 }
 
-#filter {
-  margin-bottom: 50px;
-}
-
-Iframe {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
-#header {
-  margin-top: 2%;
-  margin-bottom: 2%;
-}
 
 /* input box */
 .Select-control {
-  background-color: black;
+  background-color: beige;
   color: beige;
 }
 
 /* changes the text color of input box */
 .Select-value-label {
-  color: black !important;
+  color: #e84c3c !important;
 }
 
 .Select--single > .Select-control .Select-value, .Select-placeholder {
@@ -67,7 +68,6 @@ Iframe {
 
 .dash-table-container .row {
   display: block;
-  /* margin: 0; */
 }
 
 .d_flag {
@@ -77,4 +77,19 @@ Iframe {
 
 .driver_info_set {
   margin: 10px;
+}
+
+.driver_number {
+  font-size: 500px;
+}
+
+/* classes */
+
+#filter {
+  margin-bottom: 50px;
+}
+
+#header {
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
