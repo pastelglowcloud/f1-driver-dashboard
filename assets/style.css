@@ -1,0 +1,80 @@
+
+
+h1 {
+  text-align:center;
+  font: bold italic;
+  color: beige;
+}
+
+h2 {
+  font-size: 30px;
+  text-align: center;
+  color: beige;
+}
+
+.row {
+  display: flex;
+  /* margin: 2%; */
+}
+
+.card {
+  max-width: 100%;
+  vertical-align: bottom;
+  text-align: center;
+  padding: 0;
+}
+
+.kpi_group {
+  padding-bottom: 50px;
+  padding-top: 50px;
+}
+
+#filter {
+  margin-bottom: 50px;
+}
+
+Iframe {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#header {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+/* input box */
+.Select-control {
+  background-color: black;
+  color: beige;
+}
+
+/* changes the text color of input box */
+.Select-value-label {
+  color: black !important;
+}
+
+.Select--single > .Select-control .Select-value, .Select-placeholder {
+  border: 1px solid grey;
+  border-radius: 4px;
+}
+
+/* dropdown menu options */
+.VirtualizedSelectOption {
+  background-color: black;
+  color: beige;
+}
+
+.dash-table-container .row {
+  display: block;
+  /* margin: 0; */
+}
+
+.d_flag {
+  max-height: 10px;
+  margin: 0;
+}
+
+.driver_info_set {
+  margin: 10px;
+}
