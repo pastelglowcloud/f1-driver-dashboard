@@ -30,9 +30,25 @@ year_dropdown = dcc.Dropdown(id = "chosen_year", options = year_options, value= 
 driver_image= dbc.CardImg(id = "driver-img", src = "assets/profiles/Carlos Sainz.png")
 
 driver_info = dbc.CardGroup([
-    dbc.Col(dbc.Card(children=[dbc.CardHeader('Nationality'), dbc.CardImg(id = "d_flag", src = "assets/flags/es.png", className="card-img-top img-fluid")]), width=4),
-    dbc.Col(dbc.Card(children=[dbc.CardHeader('Number'), dbc.CardBody(id = "driver_number", children = [html.H2("55")], className="border-0 bg-transparent")]), width=4),
-    dbc.Col(dbc.Card(children=[dbc.CardHeader('Team'), dbc.CardBody(id = "team_name", children = [html.H3("Ferrari")], className="border-0 bg-transparent")]), width=4),
+    dbc.Col(
+        dbc.Card(
+            children=[
+                dbc.CardHeader('Nationality'), 
+                dbc.CardImg(id = "d_flag", src = "assets/flags/es.png", 
+                className="card-img-top img-fluid")]), width=4),
+    dbc.Col(
+        dbc.Card(
+            children=[
+                dbc.CardHeader('Number'), 
+                dbc.CardBody(id = "driver_number", children = [html.H2("55")], 
+                className="border-0 bg-transparent")]), 
+                width=4),
+    dbc.Col(
+        dbc.Card(children=[
+            dbc.CardHeader('Team'), 
+            dbc.CardBody(id = "team_name", children = [html.H3("Ferrari")], 
+            className="border-0 bg-transparent")]), 
+            width=4),
 ], id="kpi_group")
 
 twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="dark" href="https://twitter.com/Carlossainz55"> Tweets by Carlos Sainz </a> 
@@ -49,12 +65,12 @@ success_pie = dcc.Graph(id="card_success")
 dnf_pie = dcc.Graph(id="card_dnf")
 
 graph_overall_progress = dcc.Graph(id="overall_progression", className="graph")
-graph_season_progress = dcc.Graph(id="season_progression", className="graph")
-graph_avg_points = dcc.Graph(id="bar_points_avg", className="graph")
+
 graph_total_points = dcc.Graph(id="bar_points_total", className="graph")
-graph_position_scatter = dcc.Graph(id="scatter", className="graph")
 graph_circuit_quali = dcc.Graph(id="circuit-quali", className="graph")
 graph_circuit_result = dcc.Graph(id="circuit-result", className="graph")
+
+graph_position_scatter = dcc.Graph(id="scatter", className="graph")
 
 table = dcc.Graph(id="table-container")
 
@@ -79,8 +95,6 @@ app.layout = dbc.Container(id = "root",
                 dbc.Row(graph_overall_progress), 
                 dbc.Row(graph_circuit_quali), 
                 dbc.Row(graph_circuit_result), 
-                # dbc.Row(graph_season_progress),
-                # dbc.Row(graph_avg_points),
                 dbc.Row(graph_total_points),
                 dbc.Row(graph_position_scatter)
             ]),
@@ -88,7 +102,7 @@ app.layout = dbc.Container(id = "root",
         dbc.Row([table])
     ])
 
-# ----------------------------------------------- IMG AND TWITTER CALLBACKS -------------------------------------------------- #
+# ----------------------------------------------- DRIVER INFO CALLBACKS -------------------------------------------------- #
 
 @app.callback(
     Output("driver-img", 'src'),
@@ -105,6 +119,16 @@ def update_driver_info(chosen_driver):
     twitter_url = str('"'+twitter_url+'"')
     twitter_link = f'''<a class="twitter-timeline" data-theme="dark" href={twitter_url}> Tweets by Carlos Sainz </a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'''
     return driver_pic, driver_country, twitter_link
+
+@app.callback( 
+    Output("team_name", "children"),
+    Output("driver_number", "children"),
+    Input("chosen_driver","value"))
+def driver_cards(chosen_driver):
+    driver_df = df.loc[df['FullName'] == chosen_driver]
+    team_name = driver_df["TeamName"][driver_df['Year'].idxmax()]
+    driver_number = driver_df["DriverNumber"].values[0]
+    return team_name, driver_number
 
 # ----------------------------------------------- TABLE CALLBACKS -------------------------------------------------- #
 
@@ -143,20 +167,11 @@ def display_table(chosen_year, chosen_driver):
     Output("circuit-result", "figure"),
     Input("chosen_driver","value"))
 def fig_avg_bar_pts(chosen_driver):
-    # data       
+
     driver_df = df.loc[df['FullName'] == chosen_driver]
     driver_yr_summary = driver_df.groupby('Year').agg(TotalPoints = pd.NamedAgg(column="Points", aggfunc=sum), TeamName = pd.NamedAgg(column="TeamName", aggfunc=max), TotalRaces = pd.NamedAgg(column="Counter", aggfunc=sum)).reset_index()
     driver_yr_summary["AveragePoints"] = driver_yr_summary.TotalPoints / driver_yr_summary.TotalRaces
-    # average points graph
-    # avg_points_figure = px.bar(driver_yr_summary, x='Year', y='AveragePoints', color = "TeamName", text_auto=True, color_discrete_sequence=px.colors.qualitative.T10)
-    # avg_points_figure.update_xaxes(visible=True, type='category', title=None)
-    # avg_points_figure.update_yaxes(visible=False)
-    # avg_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
-    # avg_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    # avg_points_figure.update_layout(title_text=f'Average Points by Season - {chosen_driver}', title_x=0.5)
-    # avg_points_figure.update_layout(margin=dict(t=100, b=10, pad=0))
-    # avg_points_figure.layout.template = 'plotly_dark'
-    # total points graph
+
     total_points_figure = px.bar(driver_yr_summary, x='Year', y='TotalPoints', color='TeamName', text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
     total_points_figure.update_xaxes(visible=True, type='category', title=None)
     total_points_figure.update_yaxes(visible=False, showticklabels=False)
@@ -214,44 +229,6 @@ def fig_overall_progression(chosen_driver, chosen_year):
     fig.layout.template = 'plotly_dark'
     return fig
 
-#cumulative all drivers
-
-# @app.callback(
-#     Output("overall_progression", "figure"), 
-#     Input("chosen_driver","value"))
-# def fig_overall_progression(chosen_driver):
-#     driver_df = df.loc[df['FullName'] == chosen_driver]
-#     fig = px.line(data_frame=driver_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
-#     fig.update_traces(mode="markers+lines", hovertemplate=None)
-#     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
-#     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-#     fig.update_layout(title={'text': f"Overview 2018-2022: {chosen_driver}",'x':0.5})
-#     fig.update_xaxes(showgrid=False, title=None)
-#     fig.update_yaxes(showgrid=False, title=None)
-#     fig.update_layout(margin=dict(t=100, b=10, pad=0))
-#     fig.layout.template = 'plotly_dark'
-#     return fig
-
-# @app.callback(
-#     Output("season_progression", "figure"), 
-#     Input("chosen_year","value"), 
-#     Input("chosen_driver","value"))
-# def fig_season_progression(chosen_year, chosen_driver):
-#     driver_df = df.loc[df['FullName'] == chosen_driver]
-#     driver_year_df = driver_df.loc[driver_df['Year'] == chosen_year]
-#     fig = px.line(data_frame=driver_year_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
-#     fig.update_traces(mode="markers+lines", hovertemplate=None)
-#     fig.update_layout(legend = dict(orientation = "h", yanchor = "bottom", y = 1.02, xanchor = "right", x = 1), hovermode = "x", legend_title = "",)
-#     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-#     fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'x':0.5}, font=dict(color="white"))
-#     fig.update_xaxes(showgrid=False, title=None)
-#     fig.update_yaxes(showgrid=False, title=None)
-#     fig.update_layout(margin=dict(t=100, b=10, r=0,pad=0))
-#     fig.layout.template = 'plotly_dark'
-    # fig.update_xaxes(visible=False)
-    # fig.update_yaxes(visible=False, showticklabels=False)
-    return fig
-
 # ----------------------------------------------- SCATTER CALLBACKS -------------------------------------------------- #
 
 @app.callback(
@@ -260,8 +237,25 @@ def fig_overall_progression(chosen_driver, chosen_year):
 def fig_scatter(chosen_driver):
     driver_df = df.loc[df['FullName'] == chosen_driver]
     driver_df["Year"] = driver_df["Year"].astype(str)
-    fig = px.scatter(data_frame = driver_df, x = "GridPosition", y = "Position", range_x = [0,20], range_y = [0,25], color = "TeamName", trendline="ols", trendline_scope= "overall", color_discrete_sequence=px.colors.qualitative.T10)
-    fig.update_layout(legend = dict(orientation = "h", yanchor = "bottom", y = 1.02, xanchor = "right", x = 1), hovermode = "x", legend_title = "",)
+    fig = px.scatter(
+        data_frame = driver_df, 
+        x = "GridPosition", 
+        y = "Position", 
+        range_x = [0,20], 
+        range_y = [0,25], 
+        color = "TeamName", 
+        trendline="ols", 
+        trendline_scope= "overall", 
+        color_discrete_sequence=px.colors.qualitative.T10)
+    fig.update_layout(
+        legend = dict(
+            orientation = "h", 
+            yanchor = "bottom", 
+            y = 1.02, 
+            xanchor = "right", 
+            x = 1), 
+        hovermode = "x", 
+        legend_title = "",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(title={'text': 'Correlation between Grid Position and Final Result','x':0.5}, font=dict(color="white"))
     fig.update_xaxes(showgrid = False)
@@ -307,18 +301,13 @@ def update_pies(chosen_year, chosen_driver):
 @app.callback( 
     Output("total_podiums", "children"), 
     Output("highest_position", "children"),
-    Output("team_name", "children"),
-    Output("driver_number", "children"),
     Input("chosen_driver","value"))
 def driver_cards(chosen_driver):
     driver_df = df.loc[df['FullName'] == chosen_driver]
     category_races = driver_df[["ResultType", "Counter"]].groupby('ResultType').sum().reset_index()
     total_podiums = category_races.loc[category_races['ResultType'] == "Podium"]["Counter"].values[0]
-    total_wins = driver_df.query("Position == 1").sum()["Counter"]
     highest_position = driver_df["Position"].min()
-    team_name = driver_df["TeamName"][driver_df['Year'].idxmax()]
-    driver_number = driver_df["DriverNumber"].values[0]
-    return total_podiums, highest_position, team_name, driver_number
+    return total_podiums, highest_position
 
 @app.callback(
     Output("total_season_points_card", "children"), 
