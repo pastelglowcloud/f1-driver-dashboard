@@ -160,12 +160,13 @@ def fig_avg_bar_pts(chosen_driver):
 @app.callback(
     Output("overall_progression", "figure"), 
     Input("chosen_driver","value"))
-def card_overall_progression(chosen_driver):
+def fig_overall_progression(chosen_driver):
     driver_df = df.loc[df['FullName'] == chosen_driver]
     fig = px.line(data_frame=driver_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
     fig.update_traces(mode="markers+lines", hovertemplate=None)
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+    fig.layout.template = 'plotly_dark'
     return fig
 
 @app.callback(
