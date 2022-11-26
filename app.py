@@ -50,7 +50,7 @@ kpi = dbc.CardGroup([
 success_pie = dcc.Graph(id="card_success")
 dnf_pie = dcc.Graph(id="card_dnf")
 
-graph_overall_progress = dcc.Graph(id="overall_progression", className="graph")
+graph_overall_progress = dbc.Card(children=[dbc.CardHeader('Total Wins'),dcc.Graph(id="overall_progression", className="graph")])
 graph_season_progress = dcc.Graph(id="season_progression", className="graph")
 graph_avg_points = dcc.Graph(id="bar_points_avg", className="graph")
 graph_total_points = dcc.Graph(id="bar_points_total", className="graph")
@@ -140,14 +140,16 @@ def fig_avg_bar_pts(chosen_driver):
     driver_yr_summary = driver_df.groupby('Year').agg(TotalPoints = pd.NamedAgg(column="Points", aggfunc=sum), TeamName = pd.NamedAgg(column="TeamName", aggfunc=max), TotalRaces = pd.NamedAgg(column="Counter", aggfunc=sum)).reset_index()
     driver_yr_summary["AveragePoints"] = driver_yr_summary.TotalPoints / driver_yr_summary.TotalRaces
     # average points graph
-    avg_points_figure = px.bar(driver_yr_summary, x='Year', y='AveragePoints', labels = {'Points':'Points', 'Year':'Season'}, color = "TeamName", text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
-    avg_points_figure.update_xaxes(type='category')
+    avg_points_figure = px.bar(driver_yr_summary, x='Year', y='AveragePoints', color = "TeamName", text_auto=True, color_discrete_sequence=px.colors.qualitative.T10)
+    avg_points_figure.update_xaxes(visible=False, type='category')
+    avg_points_figure.update_yaxes(visible=False, showticklabels=False)
     avg_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     avg_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     avg_points_figure.update_layout(title_text=f'Average Points by Season - {chosen_driver}', title_x=0.5)
     # total points graph
     total_points_figure = px.bar(driver_yr_summary, x='Year', y='TotalPoints', labels = {'Points':'Points', 'Year':'Season'}, color='TeamName', text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
-    total_points_figure.update_xaxes(type='category')
+    total_points_figure.update_xaxes(visible=False, type='category')
+    total_points_figure.update_yaxes(visible=False, showticklabels=False)
     total_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     total_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     total_points_figure.update_layout(title_text=f'Points by Season - {chosen_driver}', title_x=0.5)
@@ -166,7 +168,7 @@ def card_overall_progression(chosen_driver):
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(
         title={'text': 'Overview 2018-2022','y':0.9,'x':0.5}, 
-        font=dict(family="Arial",size=18, color="red"))
+        font=dict(color="white"))
     return fig
 
 @app.callback(
