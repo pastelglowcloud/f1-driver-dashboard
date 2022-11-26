@@ -28,7 +28,7 @@ server = app.server
 # --------------------------------------------- build components ---------------------------------------------
 
 driver_dropdown = dcc.Dropdown(id = "chosen_driver", options = driver_options, value= "Carlos Sainz", clearable = False, className="filter")
-year_dropdown = dcc.Dropdown(id = "chosen_year", options = year_options, value= 2021, clearable = False, style={'margin-bottom': '5%'})
+year_dropdown = dcc.Dropdown(id = "chosen_year", options = year_options, value= 2022, clearable = False, style={'margin-bottom': '5%'})
 driver_image= dbc.CardImg(id = "driver-img", src = "assets/profiles/Carlos Sainz.png")
 
 driver_info = dbc.CardGroup([
