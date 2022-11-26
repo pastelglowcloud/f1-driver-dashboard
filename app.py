@@ -183,6 +183,7 @@ def fig_season_progression(chosen_year, chosen_driver):
     fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
     fig.update_xaxes(showgrid=False)
     fig.update_yaxes(showgrid=False)
+    fig.layout.template = 'plotly_dark'
     # fig.update_xaxes(visible=False)
     # fig.update_yaxes(visible=False, showticklabels=False)
     return fig
