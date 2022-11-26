@@ -75,9 +75,14 @@ Iframe {
   color: beige;
 }
 
-.dash-table-container .row {
+.table-container .row {
   display: block;
 }
+
+/* .table-container {
+  display: flex;
+  height: 100vh;
+} */
 
 .d_flag {
   max-height: 10px;
