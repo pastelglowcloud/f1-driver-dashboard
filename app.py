@@ -1,13 +1,13 @@
 # --------------------------------------------- setup and imports ---------------------------------------------
 
 import dash_bootstrap_components as dbc
-from dash import Dash, dcc, html, dash_table
+from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
-pio.templates.default = "plotly_dark"
+pio.templates.default = "none"
 load_figure_template("DARKLY")
 import pandas as pd
 
@@ -125,7 +125,7 @@ def display_table(chosen_year, chosen_driver):
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(margin=dict(t=0, b=100, l=0, r=0, pad=0))
     fig.update_layout(title_text=f'Season Summary - {chosen_driver}', title_x=0.5)
-    fig.update_layout(font_color=font_color['#f5f5dc'], title_font_color=title_color['f5f5dc'])
+    fig.update_layout(font_color='#f5f5dc', title_font_color='#f5f5dc')
     return fig
 
 # ----------------------------------------------- BAR CALLBACKS -------------------------------------------------- #
