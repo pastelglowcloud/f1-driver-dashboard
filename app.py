@@ -41,7 +41,7 @@ twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="da
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>''', height=800, width=300, id = "twitter")
 
 kpi = dbc.CardGroup([
-    dbc.Card(children=[dbc.CardHeader('Points - Career'), dbc.CardBody(id="total_career_points_card")]),
+    dbc.Col(dbc.Card(children=[dbc.CardHeader('Points - Career'), dbc.CardBody(id="total_career_points_card", className="border-0 bg-transparent")]), className="border-0 bg-transparent", width=4),
     dbc.Card(children=[dbc.CardHeader('Points - Season'), dbc.CardBody(id="total_season_points_card")]),
     dbc.Card(children=[dbc.CardHeader('Highest Position'), dbc.CardBody(id="highest_position")]),
     dbc.Card(children=[dbc.CardHeader('Total Wins'),dbc.CardBody(id="total_wins")])
@@ -50,7 +50,7 @@ kpi = dbc.CardGroup([
 success_pie = dcc.Graph(id="card_success")
 dnf_pie = dcc.Graph(id="card_dnf")
 
-graph_overall_progress = dbc.Card(children=[dbc.CardHeader('Total Wins'),dcc.Graph(id="overall_progression", className="graph")])
+graph_overall_progress = dbc.Card(children=[dbc.CardHeader('Overview 2018-2022'),dcc.Graph(id="overall_progression", className="graph")])
 graph_season_progress = dcc.Graph(id="season_progression", className="graph")
 graph_avg_points = dcc.Graph(id="bar_points_avg", className="graph")
 graph_total_points = dcc.Graph(id="bar_points_total", className="graph")
@@ -68,7 +68,7 @@ app.layout = dbc.Container(id = "root",
             dbc.Col(year_dropdown)
             ]),
         dbc.Row(
-            [dbc.Col(id = "section1", children = [ 
+            [dbc.Col(id = "section1", width=4, children = [ 
                 dbc.Row(driver_image),
                 dbc.Row(driver_info),
                 dbc.Row(twitter_feed),
@@ -142,7 +142,7 @@ def fig_avg_bar_pts(chosen_driver):
     # average points graph
     avg_points_figure = px.bar(driver_yr_summary, x='Year', y='AveragePoints', color = "TeamName", text_auto=True, color_discrete_sequence=px.colors.qualitative.T10)
     avg_points_figure.update_xaxes(visible=False, type='category')
-    avg_points_figure.update_yaxes(visible=False, showticklabels=False)
+    avg_points_figure.update_yaxes(visible=False)
     avg_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     avg_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     avg_points_figure.update_layout(title_text=f'Average Points by Season - {chosen_driver}', title_x=0.5)
@@ -166,9 +166,6 @@ def card_overall_progression(chosen_driver):
     fig.update_traces(mode="markers+lines", hovertemplate=None)
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(
-        title={'text': 'Overview 2018-2022','y':0.9,'x':0.5}, 
-        font=dict(color="white"))
     return fig
 
 @app.callback(
@@ -182,7 +179,9 @@ def fig_season_progression(chosen_year, chosen_driver):
     fig.update_traces(mode="markers+lines", hovertemplate=None)
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title_text=f"Overview of {chosen_year} Season", title_x=0.5)
+    fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
+    # fig.update_xaxes(visible=False)
+    # fig.update_yaxes(visible=False, showticklabels=False)
     return fig
 
 # ----------------------------------------------- SCATTER CALLBACKS -------------------------------------------------- #
@@ -207,15 +206,17 @@ def fig_scatter(chosen_driver):
     Input("chosen_driver","value")
 )
 def update_pies(chosen_driver):
+    # define data
     driver_df = df.loc[df['FullName'] == chosen_driver]
     driver_df_dnf = driver_df.query("Status != 'Finished'").query("Status != '+1 Lap'").query("Status != '+2 Laps'")
     success = px.pie(driver_df, values='Counter', names='ResultType', title=f'Race Results for Career - {chosen_driver}', color_discrete_sequence=px.colors.qualitative.T10, hole=.3)
     dnf = px.pie(data_frame = driver_df_dnf, values ='Counter', names = 'Status', title="Most frequent cause of DNF", color_discrete_sequence=px.colors.qualitative.T10, hover_data=['Status'], labels={'Status':'Race Result'}, hole=.3)
+    # pie 1
     success.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     success.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
     success.update_traces(textposition='inside', textinfo='percent+label')
     success.update_layout(showlegend=False)
-
+    # pie 2
     dnf.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     dnf.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
     dnf.update_traces(textposition='inside', textinfo='percent+label')
