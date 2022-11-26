@@ -8,7 +8,7 @@ import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
 # pio.templates.default = "plotly_dark"
-load_figure_template("DARKLY")
+# load_figure_template("DARKLY")
 import pandas as pd
 
 # --------------------------------------------- define data ---------------------------------------------
@@ -41,7 +41,7 @@ twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="da
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>''', height=800, width=300, id = "twitter")
 
 kpi = dbc.CardGroup([
-    dbc.Card(children=[dbc.CardHeader('Points - Career'), dbc.CardBody(id="total_career_points_card", className="border-0 bg-transparent")]),
+    dbc.Card(children=[dbc.CardHeader('Points - 2018 to 2022'), dbc.CardBody(id="total_career_points_card", className="border-0 bg-transparent")]),
     dbc.Card(children=[dbc.CardHeader('Points - Season'), dbc.CardBody(id="total_season_points_card")]),
     dbc.Card(children=[dbc.CardHeader('Highest Position'), dbc.CardBody(id="highest_position")]),
     dbc.Card(children=[dbc.CardHeader('Total Wins'),dbc.CardBody(id="total_wins")])
@@ -124,9 +124,9 @@ def display_table(chosen_year, chosen_driver):
             values=[season_summary.RoundNumber, season_summary.EventDate, season_summary.GP, season_summary.EventFormat, season_summary.Location, season_summary.QualiStatus, season_summary.GridPosition, season_summary.ResultType, season_summary.Status, season_summary.Position, season_summary.Points, season_summary.CumulativePoints], 
             fill_color = 'rgba(0, 0, 0, 0)', align='center'))])
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(margin=dict(t=0, b=100, l=0, r=0, pad=0))
     fig.update_layout(title_text=f'Season Summary - {chosen_driver}', title_x=0.5)
     fig.update_layout(font_color='#f5f5dc', title_font_color='#f5f5dc')
+    fig.update_layout(margin=dict(t=0, b=100, l=0, r=0, pad=0))
     fig.layout.template = 'plotly_dark'
     return fig
 
@@ -148,6 +148,7 @@ def fig_avg_bar_pts(chosen_driver):
     avg_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     avg_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     avg_points_figure.update_layout(title_text=f'Average Points by Season - {chosen_driver}', title_x=0.5)
+    avg_points_figure.update_layout(margin=dict(t=100, b=10, pad=0))
     avg_points_figure.layout.template = 'plotly_dark'
     # total points graph
     total_points_figure = px.bar(driver_yr_summary, x='Year', y='TotalPoints', labels = {'Points':'Points', 'Year':'Season'}, color='TeamName', text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
@@ -155,7 +156,8 @@ def fig_avg_bar_pts(chosen_driver):
     total_points_figure.update_yaxes(visible=False, showticklabels=False)
     total_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     total_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    total_points_figure.update_layout(title_text=f'Points by Season - {chosen_driver}', title_x=0.5)
+    total_points_figure.update_layout(title={'text': f'Points by Season - {chosen_driver}','x':0.5})
+    total_points_figure.update_layout(margin=dict(t=100, b=10, pad=0))
     total_points_figure.layout.template = 'plotly_dark'
     return avg_points_figure, total_points_figure
 
@@ -163,18 +165,56 @@ def fig_avg_bar_pts(chosen_driver):
 
 @app.callback(
     Output("overall_progression", "figure"), 
-    Input("chosen_driver","value"))
-def fig_overall_progression(chosen_driver):
+    Input("chosen_driver","value"),
+    Input("chosen_year","value"))
+def fig_overall_progression(chosen_driver, chosen_year):
     driver_df = df.loc[df['FullName'] == chosen_driver]
-    fig = px.line(data_frame=driver_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
-    fig.update_traces(mode="markers+lines", hovertemplate=None)
+    driver_year_df = driver_df.loc[driver_df['Year'] == chosen_year]
+    season_summary = driver_year_df[['RoundNumber', 'EventDate', 'GP', 'EventFormat', 'Location', 'QualiStatus', 'GridPosition','ResultType', 'Status', 'Position', 'Points']]
+    season_summary['CumulativePoints'] = season_summary['Points'].cumsum()
+    season_summary['GP'] = season_summary['GP'].str.replace('Grand Prix','GP')
+    fig = go.Figure(
+    go.Scatter(
+        x=season_summary["GP"],
+        y=season_summary["CumulativePoints"],
+        mode="lines+markers+text",
+        textposition="top center",
+        name="Cumulative Points",
+        ))
+    fig.update_layout(title="Error Trend")
+    fig.add_trace(
+        go.Bar(
+            x=season_summary["GP"], 
+            y=season_summary["Points"],
+            # text=season_summary["Points"],
+            name="Points each Race",
+            ))
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title={'text': f"Overview 2018-2022",'x':0.5})
-    fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=False)
+    fig.update_layout(title={'text': f"Overview 2018-2022: {chosen_driver}",'x':0.5})
+    fig.update_xaxes(showgrid=False, title=None)
+    fig.update_yaxes(showgrid=False, title=None)
+    fig.update_layout(margin=dict(t=100, b=10, pad=0))
     fig.layout.template = 'plotly_dark'
     return fig
+
+#cumulative all drivers
+
+# @app.callback(
+#     Output("overall_progression", "figure"), 
+#     Input("chosen_driver","value"))
+# def fig_overall_progression(chosen_driver):
+#     driver_df = df.loc[df['FullName'] == chosen_driver]
+#     fig = px.line(data_frame=driver_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
+#     fig.update_traces(mode="markers+lines", hovertemplate=None)
+#     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
+#     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+#     fig.update_layout(title={'text': f"Overview 2018-2022: {chosen_driver}",'x':0.5})
+#     fig.update_xaxes(showgrid=False, title=None)
+#     fig.update_yaxes(showgrid=False, title=None)
+#     fig.update_layout(margin=dict(t=100, b=10, pad=0))
+#     fig.layout.template = 'plotly_dark'
+#     return fig
 
 @app.callback(
     Output("season_progression", "figure"), 
@@ -185,11 +225,12 @@ def fig_season_progression(chosen_year, chosen_driver):
     driver_year_df = driver_df.loc[driver_df['Year'] == chosen_year]
     fig = px.line(data_frame=driver_year_df, x="EventDate", y=["Position", "GridPosition"], range_y = [0,20], color_discrete_sequence=px.colors.qualitative.T10)
     fig.update_traces(mode="markers+lines", hovertemplate=None)
-    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
+    fig.update_layout(legend = dict(orientation = "h", yanchor = "bottom", y = 1.02, xanchor = "right", x = 1), hovermode = "x", legend_title = "",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
-    fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=False)
+    fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'x':0.5}, font=dict(color="white"))
+    fig.update_xaxes(showgrid=False, title=None)
+    fig.update_yaxes(showgrid=False, title=None)
+    fig.update_layout(margin=dict(t=100, b=10, pad=0))
     fig.layout.template = 'plotly_dark'
     # fig.update_xaxes(visible=False)
     # fig.update_yaxes(visible=False, showticklabels=False)
@@ -204,11 +245,12 @@ def fig_scatter(chosen_driver):
     driver_df = df.loc[df['FullName'] == chosen_driver]
     driver_df["Year"] = driver_df["Year"].astype(str)
     fig = px.scatter(data_frame = driver_df, x = "GridPosition", y = "Position", range_x = [0,20], range_y = [0,25], color = "TeamName", trendline="ols", trendline_scope= "overall", color_discrete_sequence=px.colors.qualitative.T10)
-    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="",)
+    fig.update_layout(legend = dict(orientation = "h", yanchor = "bottom", y = 1.02, xanchor = "right", x = 1), hovermode = "x", legend_title = "",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title_text="Correlation between Grid Position and Final Result", title_x=0.5)
-    fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=False)
+    fig.update_layout(title={'text': 'Correlation between Grid Position and Final Result','x':0.5}, font=dict(color="white"))
+    fig.update_xaxes(showgrid = False)
+    fig.update_yaxes(showgrid = False)
+    fig.update_layout(margin=dict(t=100, b=10, pad=0))
     fig.layout.template = 'plotly_dark'
     return fig
 
@@ -223,18 +265,20 @@ def update_pies(chosen_driver):
     # define data
     driver_df = df.loc[df['FullName'] == chosen_driver]
     driver_df_dnf = driver_df.query("Status != 'Finished'").query("Status != '+1 Lap'").query("Status != '+2 Laps'")
-    success = px.pie(driver_df, values='Counter', names='ResultType', title=f'Race Results for Career - {chosen_driver}', color_discrete_sequence=px.colors.qualitative.T10, hole=.3)
-    dnf = px.pie(data_frame = driver_df_dnf, values ='Counter', names = 'Status', title="Most frequent cause of DNF", color_discrete_sequence=px.colors.qualitative.T10, hover_data=['Status'], labels={'Status':'Race Result'}, hole=.3)
+    success = px.pie(driver_df, values='Counter', names='ResultType', title=f'Race Results 2018-22: {chosen_driver}', color_discrete_sequence=px.colors.qualitative.T10, hole=.3)
+    dnf = px.pie(data_frame = driver_df_dnf, values ='Counter', names = 'Status', title=f"Most frequent cause of DNF: {chosen_driver}", color_discrete_sequence=px.colors.qualitative.T10, hover_data=['Status'], labels={'Status':'Race Result'}, hole=.3)
     # pie 1
     success.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     success.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
     success.update_traces(textposition='inside', textinfo='percent+label')
     success.update_layout(showlegend=False)
+    success.layout.template = 'plotly_dark'
     # pie 2
     dnf.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     dnf.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
     dnf.update_traces(textposition='inside', textinfo='percent+label')
     dnf.update_layout(showlegend=False)
+    dnf.layout.template = 'plotly_dark'
 
     return success, dnf
 
