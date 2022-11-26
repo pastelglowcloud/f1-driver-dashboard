@@ -7,8 +7,6 @@ from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
-# pio.templates.default = "plotly_dark"
-# load_figure_template("DARKLY")
 import pandas as pd
 
 # --------------------------------------------- define data ---------------------------------------------

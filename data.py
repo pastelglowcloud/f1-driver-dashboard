@@ -1,3 +1,4 @@
+
 # import packages and create cache folder for F1 data
 
 import fastf1
@@ -5,16 +6,13 @@ fastf1.Cache.enable_cache('cache')
 import pandas as pd
 import numpy as np
 
-# create race result dataframe
+seasons_wanted = [2022, 2021, 2020, 2019, 2018] # specify desired timeframe
 
+# create race result dataframe
 historical_races = pd.DataFrame(columns= 
     ['Year', 'GP', 'DriverNumber', 'BroadcastName','Abbreviation', 'TeamName', 
     'TeamColor', 'FirstName', 'LastName','FullName', 'Position', 'GridPosition', 
     'Q1','Q2','Q3','Time', 'Status', 'Points'])
-
-# specify desired timeframe
-
-seasons_wanted = [2022, 2021, 2020, 2019, 2018]
 for year in seasons_wanted:
     schedule = fastf1.get_event_schedule(year)
     gp_list = [i for i in schedule['EventName'] if 'Grand' in i]
@@ -32,8 +30,8 @@ for year in seasons_wanted:
 
 all_events = pd.DataFrame(columns= 
     ['Year', 'RoundNumber', 'Country', 'Location', 'EventDate', 'EventName', 'EventFormat', 
-    'Session1', 'Session1Date', 'Session2', 'Session2Date', 'Session3', 'Session3Date', 'Session4', 
-    'Session4Date', 'Session5', 'Session5Date', 'F1ApiSupport'])
+    'Session1', 'Session1Date', 'Session2', 'Session2Date', 'Session3', 'Session3Date', 
+    'Session4','Session4Date', 'Session5', 'Session5Date', 'F1ApiSupport'])
 for year in seasons_wanted:
     schedule = fastf1.get_event_schedule(year=year)
     schedule.insert(0,'Year','')
@@ -42,7 +40,12 @@ for year in seasons_wanted:
 
 # merge the two dataframes
 
-race_df = pd.merge(historical_races, all_events,  how='left', left_on=['Year','GP'], right_on = ['Year','EventName'])
+race_df = pd.merge(
+    historical_races, 
+    all_events,  
+    how='left', 
+    left_on=['Year','GP'], 
+    right_on = ['Year','EventName'])
 
 # create data buckets
 
