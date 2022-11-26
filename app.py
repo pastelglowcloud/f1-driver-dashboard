@@ -129,7 +129,7 @@ def display_table(chosen_year, chosen_driver):
             fill_color = 'rgba(0, 0, 0, 0)', 
             align='center'))])
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title_text=f'{chosen_year} Season Summary - {chosen_driver}', title_x=0.5)
+    fig.update_layout(title_text=f'{chosen_year} Season Summary', title_x=0.5)
     fig.update_layout(font_color='#f5f5dc', title_font_color='#f5f5dc')
     fig.update_layout(margin=dict(t=100, b=100, l=0, r=0, pad=0))
     fig.update_layout(height=1500)
@@ -164,7 +164,7 @@ def fig_avg_bar_pts(chosen_driver):
     total_points_figure.update_yaxes(visible=False, showticklabels=False)
     total_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     total_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    total_points_figure.update_layout(title={'text': f'Points by Season - {chosen_driver}','x':0.5})
+    total_points_figure.update_layout(title={'text': 'Points by Season 2018-22','x':0.5})
     total_points_figure.update_layout(margin=dict(t=100, b=10, pad=0))
     total_points_figure.layout.template = 'plotly_dark'
     #circuit quali graph
@@ -287,7 +287,7 @@ def update_pies(chosen_year, chosen_driver):
     driver_df_dnf = driver_df_dnf.query("Status != 'Finished'").query("Status != '+1 Lap'").query("Status != '+2 Laps'")
     # pie 1
     success = px.pie(driver_year_df, values='Counter', names='ResultType', color_discrete_sequence=px.colors.qualitative.T10, hole=.5)
-    success.update_layout(title={'text': f"Race Results for {chosen_year} Season",'x':0.5})
+    success.update_layout(title={'text': f"Race Results: {chosen_year} Season",'x':0.5})
     success.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     success.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
     success.update_traces(textposition='inside', textinfo='percent+label')
