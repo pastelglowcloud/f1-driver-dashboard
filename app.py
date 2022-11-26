@@ -7,7 +7,7 @@ from dash_bootstrap_templates import load_figure_template
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
-pio.templates.default = "plotly_dark"
+# pio.templates.default = "plotly_dark"
 load_figure_template("DARKLY")
 import pandas as pd
 
@@ -127,6 +127,7 @@ def display_table(chosen_year, chosen_driver):
     fig.update_layout(margin=dict(t=0, b=100, l=0, r=0, pad=0))
     fig.update_layout(title_text=f'Season Summary - {chosen_driver}', title_x=0.5)
     fig.update_layout(font_color='#f5f5dc', title_font_color='#f5f5dc')
+    fig.layout.template = 'plotly_dark'
     return fig
 
 # ----------------------------------------------- BAR CALLBACKS -------------------------------------------------- #
@@ -142,18 +143,20 @@ def fig_avg_bar_pts(chosen_driver):
     driver_yr_summary["AveragePoints"] = driver_yr_summary.TotalPoints / driver_yr_summary.TotalRaces
     # average points graph
     avg_points_figure = px.bar(driver_yr_summary, x='Year', y='AveragePoints', color = "TeamName", text_auto=True, color_discrete_sequence=px.colors.qualitative.T10)
-    avg_points_figure.update_xaxes(visible=False, type='category')
+    avg_points_figure.update_xaxes(visible=True, type='category', title=None)
     avg_points_figure.update_yaxes(visible=False)
     avg_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     avg_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     avg_points_figure.update_layout(title_text=f'Average Points by Season - {chosen_driver}', title_x=0.5)
+    avg_points_figure.layout.template = 'plotly_dark'
     # total points graph
     total_points_figure = px.bar(driver_yr_summary, x='Year', y='TotalPoints', labels = {'Points':'Points', 'Year':'Season'}, color='TeamName', text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
-    total_points_figure.update_xaxes(visible=False, type='category')
+    total_points_figure.update_xaxes(visible=True, type='category', title=None)
     total_points_figure.update_yaxes(visible=False, showticklabels=False)
     total_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
     total_points_figure.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     total_points_figure.update_layout(title_text=f'Points by Season - {chosen_driver}', title_x=0.5)
+    total_points_figure.layout.template = 'plotly_dark'
     return avg_points_figure, total_points_figure
 
 # ----------------------------------------------- LINE & AREA CALLBACKS  -------------------------------------------------- #
@@ -167,7 +170,9 @@ def fig_overall_progression(chosen_driver):
     fig.update_traces(mode="markers+lines", hovertemplate=None)
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
-    fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
+    fig.update_layout(title={'text': f"Overview 2018-2022",'x':0.5})
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(showgrid=False)
     fig.layout.template = 'plotly_dark'
     return fig
 
