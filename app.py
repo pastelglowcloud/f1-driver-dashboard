@@ -41,7 +41,7 @@ twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="da
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>''', height=800, width=300, id = "twitter")
 
 kpi = dbc.CardGroup([
-    dbc.Col(dbc.Card(children=[dbc.CardHeader('Points - Career'), dbc.CardBody(id="total_career_points_card", className="border-0 bg-transparent")]), className="border-0 bg-transparent", width=4),
+    dbc.Card(children=[dbc.CardHeader('Points - Career'), dbc.CardBody(id="total_career_points_card", className="border-0 bg-transparent")]),
     dbc.Card(children=[dbc.CardHeader('Points - Season'), dbc.CardBody(id="total_season_points_card")]),
     dbc.Card(children=[dbc.CardHeader('Highest Position'), dbc.CardBody(id="highest_position")]),
     dbc.Card(children=[dbc.CardHeader('Total Wins'),dbc.CardBody(id="total_wins")])
@@ -50,7 +50,7 @@ kpi = dbc.CardGroup([
 success_pie = dcc.Graph(id="card_success")
 dnf_pie = dcc.Graph(id="card_dnf")
 
-graph_overall_progress = dbc.Card(children=[dbc.CardHeader('Overview 2018-2022'),dcc.Graph(id="overall_progression", className="graph")])
+graph_overall_progress = dcc.Graph(id="overall_progression", className="graph")
 graph_season_progress = dcc.Graph(id="season_progression", className="graph")
 graph_avg_points = dcc.Graph(id="bar_points_avg", className="graph")
 graph_total_points = dcc.Graph(id="bar_points_total", className="graph")
@@ -115,13 +115,14 @@ def display_table(chosen_year, chosen_driver):
     driver_year_df = driver_df.loc[driver_df['Year'] == chosen_year]
     season_summary = driver_year_df[['RoundNumber', 'EventDate', 'GP', 'EventFormat', 'Location', 'QualiStatus', 'GridPosition','ResultType', 'Status', 'Position', 'Points']]
     season_summary['CumulativePoints'] = season_summary['Points'].cumsum()
-    fig = go.Figure(data=[go.Table(
-    header=dict(
-        values=list(season_summary.columns),
-        fill_color='#e45756',align='center'),
-    cells=dict(
-        values=[season_summary.RoundNumber, season_summary.EventDate, season_summary.GP, season_summary.EventFormat, season_summary.Location, season_summary.QualiStatus, season_summary.GridPosition, season_summary.ResultType, season_summary.Status, season_summary.Position, season_summary.Points, season_summary.CumulativePoints], 
-        fill_color = 'rgba(0, 0, 0, 0)', align='center'))])
+    fig = go.Figure(
+        data=[go.Table(
+        header=dict(
+            values=list(season_summary.columns),
+            fill_color='#e45756',align='center'),
+        cells=dict(
+            values=[season_summary.RoundNumber, season_summary.EventDate, season_summary.GP, season_summary.EventFormat, season_summary.Location, season_summary.QualiStatus, season_summary.GridPosition, season_summary.ResultType, season_summary.Status, season_summary.Position, season_summary.Points, season_summary.CumulativePoints], 
+            fill_color = 'rgba(0, 0, 0, 0)', align='center'))])
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(margin=dict(t=0, b=100, l=0, r=0, pad=0))
     fig.update_layout(title_text=f'Season Summary - {chosen_driver}', title_x=0.5)
@@ -166,6 +167,7 @@ def fig_overall_progression(chosen_driver):
     fig.update_traces(mode="markers+lines", hovertemplate=None)
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+    fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
     fig.layout.template = 'plotly_dark'
     return fig
 
@@ -200,6 +202,9 @@ def fig_scatter(chosen_driver):
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(title_text="Correlation between Grid Position and Final Result", title_x=0.5)
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(showgrid=False)
+    fig.layout.template = 'plotly_dark'
     return fig
 
 # ----------------------------------------------- PIE CALLBACKS -------------------------------------------------- #
