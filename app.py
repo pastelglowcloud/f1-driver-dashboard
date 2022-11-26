@@ -166,8 +166,7 @@ def card_overall_progression(chosen_driver):
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(
         title={'text': 'Overview 2018-2022','y':0.9,'x':0.5}, 
-        font=dict(family="Arial",size=18, color=“red”)
-    )
+        font=dict(family="Arial",size=18, color="red"))
     return fig
 
 @app.callback(
