@@ -181,6 +181,8 @@ def fig_season_progression(chosen_year, chosen_driver):
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),hovermode="x", legend_title="",)
     fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     fig.update_layout(title={'text': f"Overview of {chosen_year} Season",'y':0.9,'x':0.5}, font=dict(color="white"))
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(showgrid=False)
     # fig.update_xaxes(visible=False)
     # fig.update_yaxes(visible=False, showticklabels=False)
     return fig
