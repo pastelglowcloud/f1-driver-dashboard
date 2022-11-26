@@ -169,10 +169,23 @@ def display_table(chosen_year, chosen_driver):
 def fig_avg_bar_pts(chosen_driver):
 
     driver_df = df.loc[df['FullName'] == chosen_driver]
-    driver_yr_summary = driver_df.groupby('Year').agg(TotalPoints = pd.NamedAgg(column="Points", aggfunc=sum), TeamName = pd.NamedAgg(column="TeamName", aggfunc=max), TotalRaces = pd.NamedAgg(column="Counter", aggfunc=sum)).reset_index()
+    driver_yr_summary = driver_df.groupby('Year').agg(TotalPoints = pd.NamedAgg(column="Points", aggfunc=sum), TeamName = pd.NamedAgg(column="TeamName", aggfunc=max), 
+        TotalRaces = pd.NamedAgg(column="Counter", aggfunc=sum)).reset_index()
     driver_yr_summary["AveragePoints"] = driver_yr_summary.TotalPoints / driver_yr_summary.TotalRaces
 
     total_points_figure = px.bar(driver_yr_summary, x='Year', y='TotalPoints', color='TeamName', text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
+
+    #circuit quali graph
+    quali = driver_df [['Country', 'QualiStatus', 'Counter']]
+    quali = quali.groupby(['Country', 'QualiStatus'])['Counter'].sum().reset_index()
+    circuit_quali_figure = px.bar(quali, x="Country", y="Counter", color="QualiStatus", text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
+
+    #circuit result graph
+    res = driver_df[['Country', 'ResultType', 'Counter']]
+    res = res.groupby(['Country', 'ResultType'])['Counter'].sum().reset_index()
+    circuit_result_figure = px.bar(res, x="Country", y="Counter", color="ResultType", text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
+
+    #formatting
     total_points_figure.update_xaxes(visible=True, type='category', title=None)
     total_points_figure.update_yaxes(visible=False, showticklabels=False)
     total_points_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
@@ -180,10 +193,6 @@ def fig_avg_bar_pts(chosen_driver):
     total_points_figure.update_layout(title={'text': 'Points by Season 2018-22','x':0.5})
     total_points_figure.update_layout(margin=dict(t=100, b=10, pad=0))
     total_points_figure.layout.template = 'plotly_dark'
-    #circuit quali graph
-    quali = driver_df [['Country', 'QualiStatus', 'Counter']]
-    quali = quali.groupby(['Country', 'QualiStatus'])['Counter'].sum().reset_index()
-    circuit_quali_figure = px.bar(quali, x="Country", y="Counter", color="QualiStatus", text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
     circuit_quali_figure.update_xaxes(visible=True, type='category', title=None)
     circuit_quali_figure.update_yaxes(visible=False, showticklabels=False)
     circuit_quali_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
@@ -191,10 +200,6 @@ def fig_avg_bar_pts(chosen_driver):
     circuit_quali_figure.update_layout(title={'text': 'Qualifying Result by Circuit: 2018-22','x':0.5})
     circuit_quali_figure.update_layout(margin=dict(t=100, b=10, pad=0))
     circuit_quali_figure.layout.template = 'plotly_dark'
-    #circuit result graph
-    res = driver_df[['Country', 'ResultType', 'Counter']]
-    res = res.groupby(['Country', 'ResultType'])['Counter'].sum().reset_index()
-    circuit_result_figure = px.bar(res, x="Country", y="Counter", color="ResultType", text_auto=True, opacity=0.9, color_discrete_sequence=px.colors.qualitative.T10)
     circuit_result_figure.update_xaxes(visible=True, type='category', title=None)
     circuit_result_figure.update_yaxes(visible=False, showticklabels=False)
     circuit_result_figure.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), legend_title="")
@@ -286,7 +291,9 @@ def update_pies(chosen_year, chosen_driver):
     success.update_layout(showlegend=False)
     success.layout.template = 'plotly_dark'
     # pie 2
-    dnf = px.pie(data_frame = driver_df_dnf, values ='Counter', names = 'Status',color_discrete_sequence=px.colors.qualitative.T10, hover_data=['Status'], labels={'Status':'Race Result'}, hole=.5)
+    dnf = px.pie(
+        data_frame = driver_df_dnf, values ='Counter', names = 'Status',color_discrete_sequence=px.colors.qualitative.T10, 
+        hover_data=['Status'], labels={'Status':'Race Result'}, hole=.5)
     dnf.update_layout(title={'text': f"Causes of DNF: {chosen_year} Season",'x':0.5})
     dnf.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
     dnf.update_layout(margin=dict(t=100, b=10, l=0, r=0, pad=0))
