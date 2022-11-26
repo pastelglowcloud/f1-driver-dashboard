@@ -35,9 +35,9 @@ twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="da
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>''', height=800, width=300, id = "twitter")
 
 driver_info = dbc.CardGroup([
-        html.Img(id = "d_flag", src = "assets/flags/es.png"),
-        dbc.Card([dbc.CardBody(id = "driver_number", children = [html.H2("55")], className="border-0 bg-transparent")]),
-        dbc.Card([dbc.CardBody(id = "team_name", children = [html.H3("Ferrari")], className="border-0 bg-transparent")])
+        dbc.Col(dbc.Card(children=[dbc.CardHeader('Nationality'), dbc.CardImg(id = "d_flag", src = "assets/flags/es.png", className="card-img-top img-fluid")]), width=4),
+        dbc.Col(dbc.Card(children=[dbc.CardHeader('Number'), dbc.CardBody(id = "driver_number", children = [html.H2("55")], className="border-0 bg-transparent")]), width=4),
+        dbc.Col(dbc.Card(children=[dbc.CardHeader('Team'), dbc.CardBody(id = "team_name", children = [html.H3("Ferrari")], className="border-0 bg-transparent")]), width=4),
 ], id="kpi_group")
 
 kpi = dbc.CardGroup([
@@ -70,7 +70,7 @@ app.layout = dbc.Container(id = "root",
         dbc.Row(
             [dbc.Col(id = "section1", children = [ 
                 dbc.Row(driver_image),
-                dbc.Row(driver_info, className="border-0 bg-transparent"),
+                dbc.Row(driver_info),
                 dbc.Row(twitter_feed),
                 dbc.Row([success_pie_group, dnf_pie_group]),
                 ]),

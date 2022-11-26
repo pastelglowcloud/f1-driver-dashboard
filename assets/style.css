@@ -43,6 +43,15 @@ Iframe {
   display: inline-block;
 }
 
+.card-img-top {
+  height: auto; 
+  width: auto;  
+  max-height: 6vh;
+  object-fit: cover;
+  align-items: center;
+  align-self: center;
+}
+
 
 /* input box */
 .Select-control {
