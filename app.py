@@ -57,7 +57,7 @@ twitter_feed = html.Iframe(srcDoc=''' <a class="twitter-timeline" data-theme="da
 kpi = dbc.CardGroup([
     dbc.Card(children=[dbc.CardHeader('WDC Rank'), dbc.CardBody(id="wdc_rank_card", className="border-0 bg-transparent")]),
     dbc.Card(children=[dbc.CardHeader('Points'), dbc.CardBody(id="total_season_points_card")]),
-    dbc.Card(children=[dbc.CardHeader('Podiums'),dbc.CardBody(id="total_podiums")]),
+    dbc.Card(children=[dbc.CardHeader('Podiums: 2018-22'),dbc.CardBody(id="total_podiums")]),
     dbc.Card(children=[dbc.CardHeader('Best Position: 2018-22'), dbc.CardBody(id="highest_position")]),
 ])
 
