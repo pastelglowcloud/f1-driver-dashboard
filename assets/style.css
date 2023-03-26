@@ -43,15 +43,6 @@ Iframe {
   display: inline-block;
 }
 
-.card-img-top {
-  height: auto; 
-  width: auto;  
-  max-height: 6vh;
-  object-fit: cover;
-  align-items: center;
-  align-self: center;
-}
-
 
 /* input box */
 .Select-control {
@@ -75,14 +66,9 @@ Iframe {
   color: beige;
 }
 
-.table-container .row {
+.dash-table-container .row {
   display: block;
 }
-
-/* .table-container {
-  display: flex;
-  height: 100vh;
-} */
 
 .d_flag {
   max-height: 10px;
